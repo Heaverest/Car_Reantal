@@ -1,25 +1,40 @@
-// Requiring module
 const express = require("express");
-const bodyParser = require("body-parser")
-const PORT = process.env.PORT || 5000;
-
-
-
 const app = express();
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const logger = require("morgan");
+const mongoose = require("mongoose");
 
+mongoose.set("useNewUrlParser", true);
+mongoose.set("useFindAndModify", false);
+mongoose.set("useCreateIndex", true);
+
+const PORT = 3031;
+const config = require("./config");
+
+const postsRouter = require("./routes/posts");
+
+app.use(logger("dev"));
+
+const dbUrl = config.dbUrl;
+
+var options = {
+  keepAlive: 1,
+  connectTimeoutMS: 30000,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+mongoose.connect(dbUrl, options, (err) => {
+  if (err) console.log(err);
+});
+
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  }),
-);
+app.use("/posts", postsRouter);
 
-
-
-// First step is the authentication of the client
-
-
-// Server setup
-app.listen(PORT, () => {
-	console.log(`Server is Running on localhost ${PORT}`);
-})
+app.listen(PORT, function () {
+  console.log("Runnning on " + port);
+});
+module.exports = app;
