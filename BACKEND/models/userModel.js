@@ -50,7 +50,8 @@ function validateUser(user) {
     password: Joi.string()
       .min(8)
       .max(255)
-      .required()
+      .required(),
+    reservations:
   };
 
   let result = Joi.validate(user, schema);
@@ -61,7 +62,7 @@ function validateUser(user) {
 
 function validatePassword(password) {
   const complexityOptions = {
-    min: 8,
+    min: 3,
     max: 255,
     lowerCase: 1,
     upperCase: 1,

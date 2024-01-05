@@ -1,40 +1,18 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const logger = require("morgan");
+const express = require("express")
+const app = express()
 const mongoose = require("mongoose");
 
-mongoose.set("useNewUrlParser", true);
-mongoose.set("useFindAndModify", false);
-mongoose.set("useCreateIndex", true);
+require('dotenv').config()
 
-const PORT = 3031;
-const config = require("./config");
-
-const postsRouter = require("./routes/posts");
-
-app.use(logger("dev"));
-
-const dbUrl = config.dbUrl;
-
-var options = {
-  keepAlive: 1,
-  connectTimeoutMS: 30000,
+const connectionParams={
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-};
-
-mongoose.connect(dbUrl, options, (err) => {
-  if (err) console.log(err);
-});
-
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use("/posts", postsRouter);
-
-app.listen(PORT, function () {
-  console.log("Runnning on " + port);
-});
-module.exports = app;
+  // useCreateIndex: true,
+  useUnifiedTopology: true 
+}
+mongoose.connect(process.env.MONGODB_URI,connectionParams)
+  .then( () => {
+      console.log('Connected to the database ')
+  })
+  .catch( (err) => {
+      console.error(`Error connecting to the database. n${err}`);
+  })
